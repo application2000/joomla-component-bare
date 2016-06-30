@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#create skeletal joomla component
+# create skeletal joomla component
 # Albert Sharkis
 # sharkis@sharkzilatechnologies.com
 # github.com/sharkis
@@ -16,19 +16,8 @@ COPYRIGHT="$5"
 CREATE_DATE=`date '+%B %Y'`
 COPY_YEAR=`date '+%Y'`
 echo "Creating joomla component com_$COM_NAME"
-mkdir -p admin/controllers
-mkdir admin/helpers
-mkdir -p admin/language/en-GB
-mkdir -p admin/models/forms
-mkdir -p admin/sql/updates/mysql
-mkdir admin/tables
-mkdir -p "admin/views/$COM_NAME/tmpl"
-mkdir -p site/controllers
-mkdir -p site/language/en-GB
-mkdir site/models
-mkdir -p "site/views/$COM_NAME/tmpl"
-mkdir media
-cat > "$COM_NAME.xml" << EOF 
+mkdir -p com_${COM_NAME}/admin/controllers com_${COM_NAME}/admin/helpers com_${COM_NAME}/admin/language/en-GB com_${COM_NAME}/admin/models/forms com_${COM_NAME}/admin/sql/updates/mysql com_${COM_NAME}/admin/tables "com_${COM_NAME}/admin/views/$COM_NAME/tmpl" com_${COM_NAME}/site/controllers com_${COM_NAME}/site/language/en-GB com_${COM_NAME}/site/models "com_${COM_NAME}/site/views/$COM_NAME/tmpl" com_${COM_NAME}/media
+cat > com_${COM_NAME}/$COM_NAME.xml << EOF 
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.5.0" method="upgrade">
 	<name>COM_$COM_NAME</name>
@@ -93,18 +82,22 @@ cat > "$COM_NAME.xml" << EOF
 	</administration>
 </extension>
 EOF
-cat > index.html << EOF 
+cat > "com_${COM_NAME}/index.html" << EOF 
 <html><head><title>Direct access denied</title></head><body>Direct access denied</body></html>
 EOF
-find . -type d -exec cp index.html {} \;
-touch admin/sql/install.mysql.utf8.sql
-touch admin/sql/uninstall.mysql.utf8.sql
-touch admin/sql/updates/mysql/0.0.1.sql
-cat > admin/language/en-GB/en-GB.com_${COM_NAME}.sys.ini << EOF 
+find com_${COM_NAME}/ -type d -exec cp com_${COM_NAME}/index.html {} \;
+touch com_${COM_NAME}/admin/sql/install.mysql.utf8.sql
+touch com_${COM_NAME}/admin/sql/uninstall.mysql.utf8.sql
+touch com_${COM_NAME}/admin/sql/updates/mysql/0.0.1.sql
+cat > com_${COM_NAME}/admin/language/en-GB/en-GB.com_${COM_NAME}.sys.ini << EOF 
 ; Joomla! system strings
 COM_$COM_NAME=""
 COM_${COM_NAME}_DESC=""
 COM_${COM_NAME}_MENU=""
 EOF
-touch admin/language/en-GB/en-GB.com_${COM_NAME}.ini
-touch site/language/en-GB/en-GB.com_${COM_NAME}.ini
+touch com_${COM_NAME}/admin/language/en-GB/en-GB.com_${COM_NAME}.ini
+touch com_${COM_NAME}/site/language/en-GB/en-GB.com_${COM_NAME}.ini
+cat > com_${COM_NAME}/makefile << EOF
+all:
+	cd ..;zip -r com_${COM_NAME}/com_${COM_NAME}.zip com_${COM_NAME};cd com_${COM_NAME};
+EOF

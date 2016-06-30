@@ -2,7 +2,7 @@
 ## Synopsis
 Script to create skeletal Joomla! 3.5 component
 ## Usage
-sh ./joomla\_component\_bare.sh component\_name author\_name author\_email author\_url copyright\_info
+sh ./joomla\_component\_bare.sh component\_name author\_name author\_email author\_url copyright\_info     
 component\_name _should not_ have a COM\_ prefix 
 ## Motivation
 Saving time with the initial creation of Joomla! 3.5+ components

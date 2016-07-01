@@ -16,7 +16,7 @@ COPYRIGHT="$5"
 CREATE_DATE=`date '+%B %Y'`
 COPY_YEAR=`date '+%Y'`
 echo "Creating joomla component com_$COM_NAME"
-mkdir -p com_${COM_NAME}/admin/controllers com_${COM_NAME}/admin/helpers com_${COM_NAME}/admin/language/en-GB com_${COM_NAME}/admin/models/forms com_${COM_NAME}/admin/sql/updates/mysql com_${COM_NAME}/admin/tables "com_${COM_NAME}/admin/views/$COM_NAME/tmpl" com_${COM_NAME}/site/controllers com_${COM_NAME}/site/language/en-GB com_${COM_NAME}/site/models "com_${COM_NAME}/site/views/$COM_NAME/tmpl" com_${COM_NAME}/media
+mkdir -p com_${COM_NAME}/admin/controllers com_${COM_NAME}/admin/helpers com_${COM_NAME}/admin/language/en-GB com_${COM_NAME}/admin/models/forms com_${COM_NAME}/admin/sql/updates/mysql com_${COM_NAME}/admin/tables "com_${COM_NAME}/admin/views/$COM_NAME/tmpl" com_${COM_NAME}/site/controllers com_${COM_NAME}/site/language/en-GB com_${COM_NAME}/site/models "com_${COM_NAME}/site/views/$COM_NAME/tmpl" com_${COM_NAME}/media/com_${COM_NAME}
 cat > com_${COM_NAME}/$COM_NAME.xml << EOF 
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.5.0" method="upgrade">
@@ -31,7 +31,7 @@ cat > com_${COM_NAME}/$COM_NAME.xml << EOF
 	<description>COM_${COM_NAME}_DESC</description>
 	<install>
 		<sql>
-			<file driver="mysql" charset="utf8">sql/install.mysql/utf8.sql</file>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
 		</sql>
 	</install>
 	<uninstall>
@@ -89,6 +89,10 @@ find com_${COM_NAME}/ -type d -exec cp com_${COM_NAME}/index.html {} \;
 touch com_${COM_NAME}/admin/sql/install.mysql.utf8.sql
 touch com_${COM_NAME}/admin/sql/uninstall.mysql.utf8.sql
 touch com_${COM_NAME}/admin/sql/updates/mysql/0.0.1.sql
+touch com_${COM_NAME}/admin/${COM_NAME}.php
+touch com_${COM_NAME}/site/${COM_NAME}.php
+touch com_${COM_NAME}/admin/controller.php
+touch com_${COM_NAME}/site/controller.php
 cat > com_${COM_NAME}/admin/language/en-GB/en-GB.com_${COM_NAME}.sys.ini << EOF 
 ; Joomla! system strings
 COM_$COM_NAME=""

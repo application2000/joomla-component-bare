@@ -8,7 +8,9 @@ if [ -z "$5" ]; then
 	echo "usage: $0 component_name author_name author_email author_url copyright_info"
 	exit 1
 fi;
-COM_NAME="$1"
+COM_NAME=`echo $1 | sed 's/\w*/\L&/'` #lowercase
+COM_NAME_TITLECASE=`echo ${COM_NAME} | sed 's/\W//g; s/.*/\L&/; s/[a-z]*/\u&/g'`
+COM_NAME_UPPER=`echo ${COM_NAME} | sed 's/\w*/\U&/'`
 AUTHOR_NAME="$2"
 AUTHOR_EMAIL="$3"
 AUTHOR_URL="$4"
@@ -20,7 +22,7 @@ mkdir -p com_${COM_NAME}/admin/controllers com_${COM_NAME}/admin/helpers com_${C
 cat > com_${COM_NAME}/$COM_NAME.xml << EOF 
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.5.0" method="upgrade">
-	<name>COM_$COM_NAME</name>
+	<name>COM_$COM_NAME_UPPER</name>
 	<creationDate>$CREATE_DATE</creationDate>
 	<author>$AUTHOR_NAME</author>
 	<authorEmail>$AUTHOR_EMAIL</authorEmail>
@@ -95,13 +97,99 @@ touch com_${COM_NAME}/admin/controller.php
 touch com_${COM_NAME}/site/controller.php
 cat > com_${COM_NAME}/admin/language/en-GB/en-GB.com_${COM_NAME}.sys.ini << EOF 
 ; Joomla! system strings
-COM_$COM_NAME=""
-COM_${COM_NAME}_DESC=""
-COM_${COM_NAME}_MENU=""
+COM_$COM_NAME_UPPER=""
+COM_${COM_NAME_UPPER}_DESC=""
+COM_${COM_NAME_UPPER}_MENU=""
 EOF
 touch com_${COM_NAME}/admin/language/en-GB/en-GB.com_${COM_NAME}.ini
 touch com_${COM_NAME}/site/language/en-GB/en-GB.com_${COM_NAME}.ini
-cat > com_${COM_NAME}/makefile << EOF
-all:
-	cd ..;zip -r com_${COM_NAME}/com_${COM_NAME}.zip com_${COM_NAME};cd com_${COM_NAME};
+cat > makefile << EOF
+all: component
+component:	
+	@zip -qr com_${COM_NAME}.zip com_${COM_NAME}/ -x "*.git" -x "*.swp" -x "*.zip" && echo "Successfully packaged ${COM_NAME_TITLECASE} component."
 EOF
+cat > com_${COM_NAME}/admin/mvc.sh << EOS
+#!/usr/bin/env bash
+#create skeletal models, views, and controllers
+for i in "\${@}"
+do
+	#admin controllers
+	VIEW_NAME_TITLECASE=`echo \$i | sed 's/\W//g; s/.*/\L&/; s/[a-z]*/\u&/g'`
+	cat > ./controllers/\$i.php <<- EOF
+	<?php defined("_JEXEC") or die();
+	class ${COM_NAME_TITLECASE}Controller\$VIEW_NAME_TITLECASE extends JControllerForm{
+		
+	}
+	EOF
+	cat > ./controllers/\${i}s.php <<- EOF
+	<?php defined("_JEXEC") or die();
+	class ${COM_NAME_TITLECASE}Controller\${VIEW_NAME_TITLECASE}s extends JControllerAdmin{
+		public function getModel(\\\$name='\${VIEW_NAME_TITLECASE}',\\\$prefix='${COM_NAME_TITLECASE}Model',\\\$config=array('ignore_request'=>true)){
+			\\\$model = parent::getModel(\\\$name,\\\$prefix,\\\$config);
+			return \\\$model;
+		}
+	}
+	EOF
+	cat > ./models/\$i.php <<- EOF
+	<?php defined("_JEXEC") or die();
+	class ${COM_NAME_TITLECASE}Model\$VIEW_NAME_TITLECASE extends JModelAdmin{
+		public function getTable(\\\$type='\${VIEW_NAME_TITLECASE}',\\\$prefix='${COM_NAME_TITLECASE}Table',\\\$config=array()){
+			return JTable::getInstance(\\\$type,\\\$prefix,\\\$config);
+		}
+
+		public function getForm(\\\$data=array(),\\\$loadData=true){
+			\\\$form = \\\$this->loadForm('com_${COM_NAME}.\${i}','\${i}',array('control'=>'jform','load_data'=>\\\$loadData));
+			if(empty(\\\$form)){
+				return false;
+			}
+			return \\\$form;
+		}
+
+		protected function loadFormData(){
+			\\\$data = JFactory::getApplication()->getUserState('com_${COM_NAME}.edit.\${i}',array());
+			if(empty(\\\$data)){
+				\\\$data = \\\$this->getItem();
+			}
+			return \\\$data;
+		}
+	}
+	EOF
+	cat > ./models/\${i}s.php <<- EOF
+	<?php defined("_JEXEC") or die();
+	class ${COM_NAME_TITLECASE}Model\${VIEW_NAME_TITLECASE}s extends JModelList{
+		public function __construct(\\\$config=array()){
+			if(empty(\\\$config['filter_fields'])){
+				\\\$config['filter_fields']=array();
+			}
+			parent::__construct(\\\$config);
+		}
+
+		public function getListQuery(){
+			\\\$db = JFactory::getDbo();
+			\\\$query = \\\$db->getQuery(true);
+			\\\$query->select('*')
+				->from('#__${COM_NAME}_\${i}s');
+			return \\\$query;
+		}
+
+		public function populateState(\\\$ordering='id',\\\$direction='asc'){
+			parent::populateState(\\\$ordering,\\\$direction);
+			
+		}
+	}
+	EOF
+	#views
+	mkdir -p ./views/\${i}/tmpl
+	cat > ./views/\${i}/view.html.php <<- EOF
+	<?php defined("_JEXEC") or die();
+	class ${COM_NAME_TITLECASE}View\$VIEW_NAME_TITLECASE extends JViewLegacy{
+		public function display(\\\$tpl=null){
+			parent::display(\\\$tpl);
+		}
+	}
+	EOF
+	cat > ./views/\${i}/tmpl/default.php <<- EOF
+	<?php defined("_JEXEC") or die();?>
+	EOF
+done
+EOS

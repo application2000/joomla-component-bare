@@ -103,18 +103,18 @@ COM_${COM_NAME_UPPER}_MENU=""
 EOF
 touch com_${COM_NAME}/admin/language/en-GB/en-GB.com_${COM_NAME}.ini
 touch com_${COM_NAME}/site/language/en-GB/en-GB.com_${COM_NAME}.ini
-cat > makefile << EOF
+cat > makefile <<- EOF
 all: component
 component:	
 	@zip -qr com_${COM_NAME}.zip com_${COM_NAME}/ -x "*.git" -x "*.swp" -x "*.zip" && echo "Successfully packaged ${COM_NAME_TITLECASE} component."
 EOF
-cat > com_${COM_NAME}/admin/mvc.sh << EOS
+cat > com_${COM_NAME}/admin/mvc.sh <<- EOS
 #!/usr/bin/env bash
 #create skeletal models, views, and controllers
 for i in "\${@}"
 do
 	#admin controllers
-	VIEW_NAME_TITLECASE=`echo \$i | sed 's/\W//g; s/.*/\L&/; s/[a-z]*/\u&/g'`
+	VIEW_NAME_TITLECASE=\`echo \$i | sed 's/\W//g; s/.*/\L&/; s/[a-z]*/\u&/g'\`
 	cat > ./controllers/\$i.php <<- EOF
 	<?php defined("_JEXEC") or die();
 	class ${COM_NAME_TITLECASE}Controller\$VIEW_NAME_TITLECASE extends JControllerForm{
@@ -189,6 +189,18 @@ do
 	}
 	EOF
 	cat > ./views/\${i}/tmpl/default.php <<- EOF
+	<?php defined("_JEXEC") or die();?>
+	EOF
+	mkdir -p ./views/\${i}s/tmpl
+	cat > ./views/\${i}s/view.html.php <<- EOF
+	<?php defined("_JEXEC") or die();
+	class ${COM_NAME_TITLECASE}View\${VIEW_NAME_TITLECASE}s extends JViewLegacy{
+		public function display(\\\$tpl=null){
+			parent::display(\\\$tpl);
+		}
+	}
+	EOF
+	cat > ./views/\${i}s/tmpl/default.php <<- EOF
 	<?php defined("_JEXEC") or die();?>
 	EOF
 done

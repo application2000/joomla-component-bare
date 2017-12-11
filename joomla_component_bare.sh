@@ -146,7 +146,7 @@ do
 		}
 
 		protected function loadFormData(){
-			\\\$data = JFactory::getApplication()->getUserState('com_${COM_NAME}.edit.\${i}',array());
+			\\\$data = JFactory::getApplication()->getUserState('com_${COM_NAME}.edit.\${i}.data',array());
 			if(empty(\\\$data)){
 				\\\$data = \\\$this->getItem();
 			}

@@ -38,7 +38,7 @@ cat > com_${COM_NAME}/$COM_NAME.xml << EOF
 	</install>
 	<uninstall>
 		<sql>
-			<file driver="mysql" charset="utf8">sql/uninstall.mysql/utf8.sql</file>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
 		</sql>
 	</uninstall>
 	<update>

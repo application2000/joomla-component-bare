@@ -19,7 +19,7 @@ CREATE_DATE=`date '+%B %Y'`
 COPY_YEAR=`date '+%Y'`
 echo "Creating joomla component com_$COM_NAME"
 mkdir -p com_${COM_NAME}/admin/controllers com_${COM_NAME}/admin/helpers com_${COM_NAME}/admin/language/en-GB com_${COM_NAME}/admin/models/forms com_${COM_NAME}/admin/sql/updates/mysql com_${COM_NAME}/admin/tables "com_${COM_NAME}/admin/views/$COM_NAME/tmpl" com_${COM_NAME}/site/controllers com_${COM_NAME}/site/language/en-GB com_${COM_NAME}/site/models "com_${COM_NAME}/site/views/$COM_NAME/tmpl" com_${COM_NAME}/media/com_${COM_NAME}
-cat > com_${COM_NAME}/$COM_NAME.xml << EOF 
+cat > com_${COM_NAME}/$COM_NAME.xml <<- EOF 
 	<?xml version="1.0" encoding="utf-8"?>
 	<extension type="component" version="3.5.0" method="upgrade">
 		<name>COM_$COM_NAME_UPPER</name>
